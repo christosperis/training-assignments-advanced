@@ -165,12 +165,12 @@ public class HDRRenderer implements SceneProcessor {
         return dispQuad;
     }
 
-    private Material createLumShader(int srcW, int srcH, int bufW, int bufH, int mode,
+    private Material createLumShader(LumShaderHelperDto lumShaderHelperDto, int mode,
                                 int iters, Texture tex){
         Material mat = new Material(manager, "Common/MatDefs/Hdr/LogLum.j3md");
         
-        Vector2f blockSize = new Vector2f(1f / bufW, 1f / bufH);
-        Vector2f pixelSize = new Vector2f(1f / srcW, 1f / srcH);
+        Vector2f blockSize = new Vector2f(1f / lumShaderHelperDto.getBufW(), 1f / lumShaderHelperDto.getBufH());
+        Vector2f pixelSize = new Vector2f(1f / lumShaderHelperDto.getSrcW(), 1f / lumShaderHelperDto.getSrcH());
         Vector2f blocks = new Vector2f();
         float numPixels = Float.POSITIVE_INFINITY;
         if (iters != -1){
@@ -203,9 +203,9 @@ public class HDRRenderer implements SceneProcessor {
     private void createLumShaders(){
         int w = mainSceneFB.getWidth();
         int h = mainSceneFB.getHeight();
-        hdr64 = createLumShader(w,  h,  64, 64, LUMMODE_ENCODE_LUM, maxIterations, mainScene);
-        hdr8  = createLumShader(64, 64, 8,  8,  LUMMODE_NONE,       maxIterations, scene64);
-        hdr1  = createLumShader(8,  8,  1,  1,  LUMMODE_NONE,       maxIterations, scene8);
+        hdr64 = createLumShader(new LumShaderHelperDto(w, h, 64, 64), LUMMODE_ENCODE_LUM, maxIterations, mainScene);
+        hdr8  = createLumShader(new LumShaderHelperDto(64, 64, 8, 8),  LUMMODE_NONE,       maxIterations, scene64);
+        hdr1  = createLumShader(new LumShaderHelperDto(8, 8, 1, 1),  LUMMODE_NONE,       maxIterations, scene8);
     }
 
     private int opposite(int i){
